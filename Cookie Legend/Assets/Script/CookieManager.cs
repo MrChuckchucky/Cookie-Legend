@@ -23,13 +23,17 @@ public class CookieManager : MonoBehaviour
     {
 	    if(isLanded)
         {
-            if(vitesse < vitesseMax)
+            if(vitesse < vitesseMax && vitesse > -vitesseMax)
             {
                 vitesse += acceleration;
             }
             if(vitesse > vitesseMax)
             {
                 vitesse = vitesseMax;
+            }
+            if(vitesse < -vitesseMax)
+            {
+                vitesse = -vitesseMax;
             }
         }
         else
@@ -62,6 +66,18 @@ public class CookieManager : MonoBehaviour
             {
                 isLanded = false;
                 height = jump;
+            }
+        }
+        if(collision.gameObject.name == "Wall")
+        {
+            if(isLanded)
+            {
+                vitesse *= -1;
+                acceleration *= -1;
+            }
+            else
+            {
+                vitesse = 0;
             }
         }
     }
