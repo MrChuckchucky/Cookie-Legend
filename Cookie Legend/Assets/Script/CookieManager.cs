@@ -7,13 +7,13 @@ public class CookieManager : MonoBehaviour
     public float vitesseMax;
     public float acceleration;
     public float jump;
+    public float height;
 
     private bool isLanded;
     private bool isWalled;
     private bool isTurning;
     private bool isJumping;
     private float vitesse;
-    private float height;
     private int direction;
     private GameObject[] SolidBlocks;
 	// Use this for initialization
@@ -52,6 +52,7 @@ public class CookieManager : MonoBehaviour
                 isTurning = true;
                 vitesse = 0;
                 direction *= -1;
+                height = 0;
             }
         }
         if (isLanded)
