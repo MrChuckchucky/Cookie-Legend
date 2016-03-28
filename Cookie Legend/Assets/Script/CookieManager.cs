@@ -5,80 +5,113 @@ public class CookieManager : MonoBehaviour
 {
     public float gravity;
     public float vitesseMax;
+    public float vitesse;
     public float acceleration;
     public float jump;
+    public float height;
+    public float runDelay;
+    public float runStart;
+    public bool isRunning;
+    public bool isJumping;
+    public bool canJump;
+    public bool isClimbing;
+    public int direction;
 
     private bool isLanded;
-    private float vitesse;
-    private float height;
+    private bool isWalled;
+    private bool isTurning;
+    private GameObject[] SolidBlocks;
 	// Use this for initialization
 	void Start ()
     {
-        isLanded = false;
+        isClimbing = false;
+        isRunning = false;
+        isJumping = true;
+        direction = 1;
         vitesse = 0;
 	}
 	
 	// Update is called once per frame
 	void Update ()
     {
-	    if(isLanded)
+        if(!isClimbing)
         {
-            if(vitesse < vitesseMax && vitesse > -vitesseMax)
+            if (isRunning)
             {
-                vitesse += acceleration;
+                runStart += Time.deltaTime;
+                if (runStart >= runDelay)
+                {
+                    vitesseMax /= 2;
+                    isRunning = false;
+                }
             }
-            if(vitesse > vitesseMax)
+            isLanded = false;
+            isWalled = false;
+            SolidBlocks = GameObject.FindGameObjectsWithTag("SolidBlock");
+            foreach (GameObject solid in SolidBlocks)
             {
-                vitesse = vitesseMax;
+                if (solid.GetComponent<SolidBlockScript>().cookieOn)
+                {
+                    isLanded = true;
+                }
+                if (solid.GetComponent<SolidBlockScript>().cookieSide)
+                {
+                    isWalled = true;
+                }
             }
-            if(vitesse < -vitesseMax)
+            if (!isWalled)
             {
-                vitesse = -vitesseMax;
-            }
-        }
-        else
-        {
-            height -= gravity;
-            gameObject.transform.position += new Vector3(0, height * Time.deltaTime, 0);
-        }
-        gameObject.transform.position += new Vector3(vitesse * Time.deltaTime, 0, 0);
-	}
-
-    void OnCollisionEnter(Collision collision)
-    {
-        if(collision.gameObject.name == "Plateforme")
-        {
-            isLanded = true;
-            gameObject.transform.position = new Vector3(gameObject.transform.position.x, collision.gameObject.transform.position.y + 1, gameObject.transform.position.z);
-        }
-    }
-
-    void OnTriggerEnter(Collider collision)
-    {
-        if (collision.gameObject.name == "Plateforme")
-        {
-            isLanded = true;
-            gameObject.transform.position = new Vector3(gameObject.transform.position.x, collision.gameObject.transform.position.y + 1, gameObject.transform.position.z);
-        }
-        if (collision.gameObject.name == "Jump")
-        {
-            if(isLanded)
-            {
-                isLanded = false;
-                height = jump;
-            }
-        }
-        if(collision.gameObject.name == "Wall")
-        {
-            if(isLanded)
-            {
-                vitesse *= -1;
-                acceleration *= -1;
+                isTurning = false;
             }
             else
             {
-                vitesse = 0;
+                if (isLanded && !isTurning)
+                {
+                    isTurning = true;
+                    vitesse = 0;
+                    direction *= -1;
+                    height = 0;
+                }
             }
+            if (isLanded)
+            {
+                if (vitesse < vitesseMax && vitesse > -vitesseMax)
+                {
+                    vitesse += acceleration * direction;
+                }
+                if (vitesse > vitesseMax)
+                {
+                    if (vitesse - vitesseMax <= 0.5f)
+                    {
+                        vitesse = vitesseMax;
+                    }
+                    else
+                    {
+                        vitesse -= acceleration * direction;
+                    }
+                }
+                if (vitesse < -vitesseMax)
+                {
+                    vitesse = -vitesseMax;
+                }
+                isJumping = false;
+            }
+            else
+            {
+                if (canJump && !isJumping)
+                {
+                    height = jump;
+                    isJumping = true;
+                }
+                height -= gravity;
+                gameObject.transform.position += new Vector3(0, height * Time.deltaTime, 0);
+            }
+            gameObject.transform.position += new Vector3(vitesse * Time.deltaTime, 0, 0);
         }
+    }
+
+    public void Death()
+    {
+        Debug.Log("dead");
     }
 }
