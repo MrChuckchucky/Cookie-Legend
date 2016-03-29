@@ -37,6 +37,8 @@ public class LadderScript : MonoBehaviour
             {
                 isClimbing = false;
                 cookie.GetComponent<CookieManager>().isClimbing = false;
+                cookie.transform.position = new Vector3(cookie.transform.position.x, transform.position.y + 1, cookie.transform.position.z);
+                cookie.GetComponent<CookieManager>().vitesse = 5 * cookie.GetComponent<CookieManager>().direction;
             }
         }
     }
