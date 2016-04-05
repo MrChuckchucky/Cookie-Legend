@@ -13,12 +13,19 @@ public class MilkGlassScript : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-            if (Mathf.Abs((cookie.transform.position.y + cookie.transform.lossyScale.y) - (transform.position.y + transform.lossyScale.y)) <= cookie.transform.lossyScale.y)
+        if (Mathf.Abs((cookie.transform.position.y + cookie.transform.lossyScale.y) - (transform.position.y + transform.lossyScale.y)) <= cookie.transform.lossyScale.y)
+        {
+            if (Mathf.Abs((cookie.transform.position.x + cookie.transform.lossyScale.x) - (transform.position.x + transform.lossyScale.x)) <= 1)
             {
-                if (Mathf.Abs((cookie.transform.position.x + cookie.transform.lossyScale.x) - (transform.position.x + transform.lossyScale.x)) <= 1)
-                {
-                    cookie.GetComponent<CookieManager>().transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-                }
+                cookie.GetComponent<CookieManager>().transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
             }
+        }
+        /*if (Mathf.Abs((cookie.transform.position.x + cookie.transform.lossyScale.x) - (transform.position.x + transform.lossyScale.x)) <= cookie.transform.lossyScale.x)
+        {
+            if (Mathf.Abs((cookie.transform.position.y) - (transform.position.y + transform.lossyScale.y)) <= 0.1f)
+            {
+                cookie.GetComponent<CookieManager>().isClimbing = false;
+            }
+        }*/
     }
 }
