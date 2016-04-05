@@ -108,6 +108,10 @@ public class CookieManager : MonoBehaviour
             }
             gameObject.transform.position += new Vector3(vitesse * Time.deltaTime, 0, 0);
         }
+        else
+        {
+            transform.position += new Vector3(0, 10 * Time.deltaTime, 0);
+        }
     }
 
     public void Death()

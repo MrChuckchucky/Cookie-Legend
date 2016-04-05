@@ -20,14 +20,12 @@ public class MilkGlassScript : MonoBehaviour
                 cookie.GetComponent<CookieManager>().transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
             }
         }
-        if (Mathf.Abs((cookie.transform.position.x + cookie.transform.lossyScale.x) - (transform.position.x + transform.lossyScale.x)) <= cookie.transform.lossyScale.x)
+        /*if (Mathf.Abs((cookie.transform.position.x + cookie.transform.lossyScale.x) - (transform.position.x + transform.lossyScale.x)) <= cookie.transform.lossyScale.x)
         {
             if (Mathf.Abs((cookie.transform.position.y) - (transform.position.y + transform.lossyScale.y)) <= 0.1f)
             {
                 cookie.GetComponent<CookieManager>().isClimbing = false;
-                cookie.transform.position = new Vector3(cookie.transform.position.x, transform.position.y + 1, cookie.transform.position.z);
-                cookie.GetComponent<CookieManager>().vitesse = 5 * cookie.GetComponent<CookieManager>().direction;
             }
-        }
+        }*/
     }
 }

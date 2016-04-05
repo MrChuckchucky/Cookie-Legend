@@ -31,7 +31,7 @@ public class SolidBlockScript : MonoBehaviour
         cookieSide = false;
         if (!notCookieOn && Mathf.Abs((cookie.transform.position.x + cookie.transform.localScale.x) - (transform.position.x + transform.localScale.x)) <= cookie.transform.localScale.x)
         {
-            if (Mathf.Abs((cookie.transform.position.y) - (transform.position.y + transform.localScale.y)) <= 0.1f)
+            if (Mathf.Abs((cookie.transform.position.y) - (transform.position.y + transform.localScale.y)) <= 0.5f)
             {
                 cookieOn = true;
                 cookie.transform.position = new Vector3(cookie.transform.position.x, transform.position.y + cookie.transform.localScale.y + 0.01f, cookie.transform.position.z);
