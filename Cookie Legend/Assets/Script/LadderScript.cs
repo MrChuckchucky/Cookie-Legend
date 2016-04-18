@@ -19,12 +19,12 @@ public class LadderScript : MonoBehaviour
         {
             if (Mathf.Abs((cookie.transform.position.x + cookie.transform.lossyScale.x) - (transform.position.x + transform.lossyScale.x)) <= 1)
             {
-                if(!isClimbing)
+                if(!isClimbing && cookie.transform.position.y - transform.position.y < 1)
                 {
                     isClimbing = true;
-                    cookie.GetComponent<CookieManager>().isClimbing = true;
-                    cookie.GetComponent<CookieManager>().transform.position += new Vector3(0.5f * cookie.GetComponent<CookieManager>().direction, 0, 0);
-                    cookie.GetComponent<CookieManager>().vitesse = 0;
+                    /*cookie.GetComponent<CookieManager>().transform.position += new Vector3(0.5f * cookie.GetComponent<CookieManager>().direction, 0, 0);
+                    cookie.GetComponent<CookieManager>().vitesse = 0;*/
+                    cookie.transform.position = new Vector3(transform.position.x, cookie.transform.position.y + 1, cookie.transform.position.z);
                 }
             }
         }
@@ -33,11 +33,9 @@ public class LadderScript : MonoBehaviour
         {
             if (Mathf.Abs((cookie.transform.position.y) - (transform.position.y + transform.lossyScale.y)) <= 0.1f)
             {
-                Debug.Log("yo");
-                isClimbing = false;
-                cookie.GetComponent<CookieManager>().isClimbing = false;
                 cookie.transform.position = new Vector3(cookie.transform.position.x, transform.position.y + 1, cookie.transform.position.z);
                 cookie.GetComponent<CookieManager>().vitesse = 5 * cookie.GetComponent<CookieManager>().direction;
+                cookie.transform.position = new Vector3(transform.position.x, cookie.transform.position.y + 1, cookie.transform.position.z);
             }
         }
     }

@@ -34,12 +34,12 @@ public class SolidBlockScript : MonoBehaviour
             if (Mathf.Abs((cookie.transform.position.y) - (transform.position.y + transform.localScale.y)) <= 0.5f)
             {
                 cookieOn = true;
-                cookie.transform.position = new Vector3(cookie.transform.position.x, transform.position.y + cookie.transform.localScale.y + 0.01f, cookie.transform.position.z);
+                cookie.transform.position = new Vector3(cookie.transform.position.x, transform.position.y + 1.01f, cookie.transform.position.z);
             }
         }
         if (Mathf.Abs((cookie.transform.position.y + cookie.transform.localScale.y) - (transform.position.y + transform.localScale.y)) <= cookie.transform.localScale.y)
         {
-            if (Mathf.Abs((cookie.transform.position.x + cookie.transform.localScale.x) - (transform.position.x + transform.localScale.x)) <= 1)
+            if (Mathf.Abs((cookie.transform.position.x) - (transform.position.x)) <= 1)
             {
                 cookieSide = true;
             }

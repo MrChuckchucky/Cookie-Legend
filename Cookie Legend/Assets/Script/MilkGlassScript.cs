@@ -24,7 +24,7 @@ public class MilkGlassScript : MonoBehaviour
         {
             if (Mathf.Abs((cookie.transform.position.y) - (transform.position.y + transform.lossyScale.y)) <= 0.1f)
             {
-                cookie.GetComponent<CookieManager>().isClimbing = false;
+                cookie.GetComponent<CookieManager>().isLanded = true;
             }
         }*/
     }
