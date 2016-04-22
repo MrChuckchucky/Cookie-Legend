@@ -13,108 +13,235 @@ public class CookieManager : MonoBehaviour
     public float runStart;
     public bool isRunning;
     public bool isJumping;
-    public bool canJump;
-    public bool isClimbing;
     public int direction;
 
     private bool isLanded;
+    private bool alreadyLanded;
     private bool isWalled;
+    private bool alreadyWalled;
     private bool isTurning;
-    private GameObject[] SolidBlocks;
+    private bool inSugar;
 	// Use this for initialization
 	void Start ()
     {
-        isClimbing = false;
+        inSugar = false;
+        alreadyWalled = false;
+        alreadyLanded = false;
         isRunning = false;
-        isJumping = true;
+        isJumping = false;
         direction = 1;
         vitesse = 0;
-	}
-	
-	// Update is called once per frame
-	void Update ()
+    }
+
+    void OnTriggerEnter(Collider collider)
     {
-        if(!isClimbing)
+        switch(collider.tag)
         {
-            if (isRunning)
-            {
-                runStart += Time.deltaTime;
-                if (runStart >= runDelay)
-                {
-                    vitesseMax /= 2;
-                    isRunning = false;
-                }
-            }
-            isLanded = false;
-            isWalled = false;
-            SolidBlocks = GameObject.FindGameObjectsWithTag("SolidBlock");
-            foreach (GameObject solid in SolidBlocks)
-            {
-                if (solid.GetComponent<SolidBlockScript>().cookieOn)
-                {
-                    isLanded = true;
-                }
-                if (solid.GetComponent<SolidBlockScript>().cookieSide)
+            case "Wall":
+                if(!isWalled)
                 {
                     isWalled = true;
-                }
-            }
-            if (!isWalled)
-            {
-                isTurning = false;
-            }
-            else
-            {
-                if (isLanded && !isTurning)
-                {
-                    isTurning = true;
-                    vitesse = 0;
-                    direction *= -1;
-                    height = 0;
-                }
-            }
-            if (isLanded)
-            {
-                if (vitesse < vitesseMax && vitesse > -vitesseMax)
-                {
-                    vitesse += acceleration * direction;
-                }
-                if (vitesse > vitesseMax)
-                {
-                    if (vitesse - vitesseMax <= 0.5f)
+                    if(transform.position.x < collider.transform.position.x)
                     {
-                        vitesse = vitesseMax;
+                        transform.position = new Vector3(collider.transform.position.x - (0.5f + transform.localScale.y / 2), transform.position.y, 0);
                     }
                     else
                     {
-                        vitesse -= acceleration * direction;
+                        transform.position = new Vector3(collider.transform.position.x + (0.5f + transform.localScale.y / 2), transform.position.y, 0);
+                    }
+                    vitesse = 0;
+                    height = 0;
+                    gravity = 2;
+                }
+                else
+                {
+                    alreadyWalled = true;
+                }
+                break;
+            case "Plateform":
+                if(!isLanded)
+                {
+                    if (transform.position.y < collider.transform.position.y)
+                    {
+                        height = 0;
+                        transform.position = new Vector3(transform.position.x, collider.transform.position.y - (0.5f + transform.localScale.y / 2), 0);
+                    }
+                    else
+                    {
+                        isLanded = true;
+                        transform.position = new Vector3(transform.position.x, collider.transform.position.y + (0.5f + transform.localScale.y / 2), 0);
                     }
                 }
-                if (vitesse < -vitesseMax)
+                else
                 {
-                    vitesse = -vitesseMax;
+                    alreadyLanded = true;
                 }
-                isJumping = false;
-            }
-            else
-            {
-                if (canJump && !isJumping)
-                {
-                    height = jump;
-                    isJumping = true;
-                }
-                height -= gravity;
-                gameObject.transform.position += new Vector3(0, height * Time.deltaTime, 0);
-            }
-            gameObject.transform.position += new Vector3(vitesse * Time.deltaTime, 0, 0);
-        }
-        else
-        {
-            transform.position += new Vector3(0, 10 * Time.deltaTime, 0);
+                break;
+            case "Bumper":
+                Bumper(collider);
+                break;
+            case "Milkglass":
+                transform.localScale = new Vector3(0.4f, 0.4f, 1);
+                break;
+            case "Furnace":
+                transform.localScale = new Vector3(1, 1, 1);
+                break;
+            case "Sugar":
+                inSugar = true;
+                break;
+            case "Pepper":
+                vitesseMax = 20;
+                runStart = Time.time;
+                Destroy(collider.gameObject);
+                break;
+            case "Finish":
+                Finish();
+                break;
+            case "Killer":
+                Death();
+                break;
         }
     }
 
-    public void Death()
+    void Bumper(Collider collider)
+    {
+        if (Mathf.Abs(transform.position.x - collider.transform.position.x) > Mathf.Abs(transform.position.y - collider.transform.position.y))
+        {
+            if (transform.position.x < collider.transform.position.x)
+            {
+                direction = -1;
+            }
+            else
+            {
+                direction = 1;
+            }
+            vitesse = vitesseMax * direction * 2;
+        }
+        else
+        {
+            if (transform.position.y < collider.transform.position.y)
+            {
+                height = jump * -2f;
+            }
+            else
+            {
+                height = jump * 2f;
+            }
+            if(isWalled)
+            {
+                height /= 2;
+            }
+        }
+    }
+
+    void OnTriggerExit(Collider collider)
+    {
+        switch (collider.tag)
+        {
+            case "Wall":
+                if(!alreadyWalled)
+                {
+                    isWalled = false;
+                    gravity = 10;
+                }
+                else
+                {
+                    alreadyWalled = false;
+                }
+                break;
+            case "Plateform":
+                if(!alreadyLanded)
+                {
+                    if(transform.position.y > collider.transform.position.y)
+                    {
+                        isLanded = false;
+                        if(!inSugar)
+                        {
+                            height = jump;
+                        }
+                    }
+                }
+                else
+                {
+                    alreadyLanded = false;
+                }
+                break;
+            case "Sugar":
+                inSugar = false;
+                break;
+        }
+    }
+
+    void Update()
+    {
+        if(runStart + runDelay <= Time.time)
+        {
+            vitesseMax = 10;
+        }
+        if(isLanded)
+        {
+            if(direction > 0)
+            {
+                if(Mathf.Abs(vitesse - vitesseMax) < 1)
+                {
+                    vitesse = vitesseMax;
+                }
+                else if(vitesse < vitesseMax)
+                {
+                    vitesse += acceleration * Time.deltaTime;
+                }
+                else if(vitesse > vitesseMax)
+                {
+                    vitesse -= acceleration * Time.deltaTime;
+                }
+            }
+            else
+            {
+                if (Mathf.Abs(vitesse + vitesseMax) < 1)
+                {
+                    vitesse = -vitesseMax;
+                }
+                else if (vitesse > vitesseMax)
+                {
+                    vitesse += acceleration * Time.deltaTime;
+                }
+                else if (vitesse < vitesseMax)
+                {
+                    vitesse -= acceleration * Time.deltaTime;
+                }
+            }
+        }
+        else
+        {
+            height -= gravity * Time.deltaTime;
+            transform.position += new Vector3(0, height * Time.deltaTime, 0);
+        }
+        if(isJumping)
+        {
+            isJumping = false;
+            height = jump;
+        }
+        transform.position += new Vector3(vitesse * Time.deltaTime, 0, 0);
+        if(isWalled)
+        {
+            if(!isTurning && isLanded)
+            {
+                isTurning = true;
+                direction *= -1;
+            }
+        }
+        else
+        {
+            isTurning = false;
+        }
+    }
+    
+    void Finish()
+    {
+        Debug.Log("Finish");
+    }
+
+    void Death()
     {
         Debug.Log("dead");
     }
