@@ -96,7 +96,7 @@ public class CookieManager : MonoBehaviour
                     break;
                 case "Pepper":
                     vitesseMax = 20;
-                    runStart = Time.time;
+                    runStart = runDelay;
                     collider.transform.position += new Vector3(0, 0, -21);
                     break;
                 case "Finish":
@@ -180,9 +180,13 @@ public class CookieManager : MonoBehaviour
     {
         if(playMode)
         {
-            if (runStart + runDelay <= Time.time)
+            if (runStart <= 0)
             {
                 vitesseMax = 10;
+            }
+            else
+            {
+                runStart -= Time.deltaTime;
             }
             if (isLanded)
             {
